@@ -6,7 +6,8 @@ import { client } from "./client";
 import { useActiveAccount, useWalletBalance } from "thirdweb/react";
 import { defineChain } from "thirdweb/chains";
 
-import Proposals from "./Proposals/page";
+import Proposals from "./components/Proposals";
+import AddMember from "./components/AddMember";
 
 export default function Home() {
   const account = useActiveAccount();
@@ -43,6 +44,7 @@ export default function Home() {
 
         <div className="flex justify-center mb-20">
           <ConnectButton client={client} />
+          <AddMember />
         </div>
         <div className="grid gap-4  justify-center">
           <p>wallet address {account?.address}</p>
