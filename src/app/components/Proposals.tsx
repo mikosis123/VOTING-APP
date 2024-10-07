@@ -8,89 +8,90 @@ const Proposals = () => {
   const totalProposals = 10;
   const account = useActiveAccount();
   const [proposals, setProposals] = useState<any[]>([]);
-  let i = 1;
+  const [newProposal, setNewProposal] = useState("");
 
   const { data, isPending } = useReadContract({
     contract,
     method:
-      "function proposals(uint256) view returns (address target, bytes data, uint256 yesCount, uint256 noCount, bool executed)",
-    params: [BigInt(i)],
+      "function getAllProposals() view returns ((address target, bytes data, uint256 yesCount, uint256 noCount, bool executed)[])",
+    params: [],
   });
-  const decodedProposalData = data?.[1]
-    ? bytesToString(hexToBytes(data?.[1]))
-    : undefined;
-  console.log(data ? data : "No data");
 
-  const voteyes = async (i: number, yesvote: boolean) => {
+  useEffect(() => {
+    if (data) {
+      const decodedProposals = data.map((proposal: any) => {
+        return {
+          ...proposal,
+          decodedData: proposal.data
+            ? bytesToString(hexToBytes(proposal.data))
+            : "No Data",
+        };
+      });
+      setProposals(decodedProposals);
+    }
+  }, [data]);
+
+  const castVote = async (proposalId: number, vote: boolean) => {
     if (!account) {
       console.error("No active account found");
       return;
     }
+
     try {
-      // Send the transaction directly using sendTransaction
       const transaction = await prepareContractCall({
         contract,
-        method: "function castVote(uint256 proID, bool vote)", // Simplified method name
-        params: [BigInt(i), yesvote], // Pass proposal ID and vote
+        method: "function castVote(uint256 proID, bool vote)",
+        params: [BigInt(proposalId), vote],
       });
       const { transactionHash } = await sendTransaction({
         transaction,
         account,
       });
 
-      console.log("Transaction successful!", transaction); // Log the result
+      console.log("Transaction successful!", transactionHash);
     } catch (error) {
-      console.error("Error casting vote:", error); // Handle any errors
-    }
-  };
-  const voteno = async (i: number, novote: boolean) => {
-    if (!account) {
-      console.error("No active account found");
-      return;
-    }
-    try {
-      // Send the transaction directly using sendTransaction
-      const transaction = await prepareContractCall({
-        contract,
-        method: "function castVote(uint256 proID, bool vote)", // Simplified method name
-        params: [BigInt(i), novote], // Pass proposal ID and vote
-      });
-      const { transactionHash } = await sendTransaction({
-        transaction,
-        account,
-      });
-
-      console.log("Transaction successful!", transaction); // Log the result
-    } catch (error) {
-      console.error("Error casting vote:", error); // Handle any errors
+      console.error("Error casting vote:", error);
     }
   };
 
   return (
-    <div className="flex justify-between items-center border border-zinc-800 p-8 rounded-lg hover:bg-zinc-900 transition-colors hover:border-zinc-700">
-      <article>
-        <h2 className="text-lg font-semibold mb-2">{decodedProposalData}</h2>
-        <p className="text-sm text-zinc-400">
-          yes counts {data?.[2].toString()}
-        </p>
-        <p className="text-sm text-zinc-400">
-          no counts {data?.[3].toString()}
-        </p>
-      </article>
-      <div className="flex flex-col gap-2">
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          onClick={() => voteyes(i, true)}
-        >
-          yes vote
-        </button>
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          onClick={() => voteno(i, false)}
-        >
-          No vote
-        </button>
-      </div>
+    <div>
+      {isPending ? (
+        <p>Loading proposals...</p>
+      ) : (
+        proposals.map((proposal, index) => (
+          <div
+            key={index}
+            className="flex justify-between items-center border border-zinc-800 p-8 mt-4 rounded-lg hover:bg-zinc-900 transition-colors hover:border-zinc-700"
+          >
+            <article>
+              <h2 className="text-lg font-semibold mb-2">
+                {proposal.decodedData}
+              </h2>
+              <p className="text-sm text-zinc-400">
+                Yes counts: {proposal.yesCount.toString()}
+              </p>
+              <p className="text-sm text-zinc-400">
+                No counts: {proposal.noCount.toString()}
+              </p>
+            </article>
+            <div className="flex flex-col gap-2">
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={() => castVote(index, true)}
+              >
+                Yes Vote
+              </button>
+              <button
+                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                onClick={() => castVote(index, false)}
+              >
+                No Vote
+              </button>
+            </div>
+          </div>
+        ))
+      )}
     </div>
   );
 };
