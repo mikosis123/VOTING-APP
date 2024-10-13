@@ -114,7 +114,7 @@ const Proposals = () => {
   };
   return (
     // <div className="absolute inset-0 -z-10 h-full w-full items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]">
-    <div className="relative h-[100%] bg-slate-950">
+    <div className=" h-[100%] min-h-screen bg-slate-950 pb-10">
       <div className="  inset-0   bg-[radial-gradient(circle_500px_at_50%_200px,#3e3e3e,transparent)]">
         <div className="flex justify-center items-center py-4">
           <input
