@@ -8,6 +8,7 @@ import { defineChain } from "thirdweb/chains";
 import AddMember from "./components/AddMember";
 
 import { useState } from "react";
+import { Account } from "thirdweb/wallets";
 
 export default function Home() {
   const account = useActiveAccount();
@@ -18,6 +19,13 @@ export default function Home() {
     method: "function owner() view returns (address)",
     params: [],
   });
+  const { data: members, isPending } = useReadContract({
+    contract,
+    method:
+      "function getAllMembers() view returns ((address memberAddress, string name)[])",
+    params: [],
+  });
+  console.log("members", members);
 
   return (
     <div className="  h-[100%]  bg-slate-950">
@@ -54,10 +62,22 @@ export default function Home() {
 
             {account && (
               <div className="mt-10">
-                <AddMember />
-                <p className="mt-2 text-blue-400 ">
-                  please add your wallet address and name to be a member
-                </p>
+                {/* Check if the account's address is not in the members list */}
+                {!members?.some(
+                  (member) =>
+                    member?.memberAddress === (account?.address as string)
+                ) ? (
+                  <div>
+                    <AddMember />
+                    <p className="mt-2 text-blue-400">
+                      Please add your wallet address and name to be a member
+                    </p>
+                  </div>
+                ) : (
+                  <div className="mt-2 text-2xl text-blue-400 text-center">
+                    You are a member !! time to vote for proposals
+                  </div>
+                )}
               </div>
             )}
           </div>

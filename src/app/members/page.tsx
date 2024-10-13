@@ -12,7 +12,13 @@ const Members = () => {
   });
 
   if (isPending) {
-    return <p>Loading members...</p>;
+    return (
+      <div className="relative min-h-screen w-full bg-slate-950 pb-10">
+        <div className=" inset-0 h-screen  bg-[radial-gradient(circle_500px_at_50%_200px,#3e3e3e,transparent)]">
+          <p>Loading members...</p>
+        </div>
+      </div>
+    );
   }
 
   if (data && data.length > 0) {

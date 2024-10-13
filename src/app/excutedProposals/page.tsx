@@ -68,39 +68,6 @@ const ExecutedProposals = () => {
     }
   }, [data]);
 
-  // Encode the new proposal data into hex
-  const encodedData = stringToBytes(newProposal);
-  const hexEncodedData = `0x${Buffer.from(encodedData).toString(
-    "hex"
-  )}` as `0x${string}`;
-
-  const onClick = async () => {
-    if (!account?.address) {
-      console.error("No account connected");
-      return;
-    }
-
-    try {
-      const transaction = await prepareContractCall({
-        contract,
-        method: "function NewProposal(address proposal, bytes data)",
-        params: [account.address, hexEncodedData],
-      });
-
-      // Send the transaction
-      sendTransaction(transaction, {
-        onSuccess: (txResult) => {
-          console.log("Transaction successful!", txResult);
-        },
-        onError: (error) => {
-          console.error("Transaction failed:", error);
-        },
-      });
-    } catch (error) {
-      console.error("Error preparing transaction:", error);
-    }
-  };
-
   return (
     <div className="relative min-h-screen w-full bg-slate-950 pb-10">
       <div className=" inset-0 h-screen py-8 bg-[radial-gradient(circle_500px_at_50%_200px,#3e3e3e,transparent)]">
