@@ -22,7 +22,7 @@ const Nav = () => {
   });
 
   return (
-    <nav className="bg-gray-700 text-white py-2 px-6">
+    <nav className="bg-gray-700 text-white py-2 px-6 border-gray-500">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <Link
           href="/"
