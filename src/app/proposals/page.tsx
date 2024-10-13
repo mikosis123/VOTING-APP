@@ -28,26 +28,6 @@ const Proposals = () => {
   });
   console.log("data", data);
 
-  const fetchContractEvents = async () => {
-    try {
-      const preparedEvent = prepareEvent({
-        signature: "event VoteCast(uint256 proID, address voter)",
-      });
-
-      // Await for the useContractEvents to fetch the data
-      const { data: event } = await useContractEvents({
-        contract,
-        events: [preparedEvent],
-      });
-
-      // Log the event data to the console
-      console.log("event", event);
-    } catch (error) {
-      // Handle any errors that might occur during the execution
-      console.error("Error fetching contract events:", error);
-    }
-  };
-
   useEffect(() => {
     if (data) {
       const decodedProposals = data.map((proposal: any) => {
