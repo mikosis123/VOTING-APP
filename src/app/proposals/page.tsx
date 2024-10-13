@@ -27,15 +27,26 @@ const Proposals = () => {
     params: [],
   });
   console.log("data", data);
-  const preparedEvent = prepareEvent({
-    contract,
-    signature: "event VoteCast(uint256 proID, address voter)",
-  });
-  const { data: event } = useContractEvents({
-    contract,
-    events: [preparedEvent],
-  });
-  console.log("event", event);
+
+  const fetchContractEvents = async () => {
+    try {
+      const preparedEvent = prepareEvent({
+        signature: "event VoteCast(uint256 proID, address voter)",
+      });
+
+      // Await for the useContractEvents to fetch the data
+      const { data: event } = await useContractEvents({
+        contract,
+        events: [preparedEvent],
+      });
+
+      // Log the event data to the console
+      console.log("event", event);
+    } catch (error) {
+      // Handle any errors that might occur during the execution
+      console.error("Error fetching contract events:", error);
+    }
+  };
 
   useEffect(() => {
     if (data) {
@@ -107,6 +118,10 @@ const Proposals = () => {
     }
   };
   const excute = async (proID: number) => {
+    if (!account) {
+      console.error("No active account found");
+      return;
+    }
     const transaction = await prepareContractCall({
       contract,
       method: "function executeProposal(uint256 proID)",
