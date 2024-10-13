@@ -13,12 +13,6 @@ export default function Home() {
   const account = useActiveAccount();
   const chain = defineChain(11155111); // Assuming this is Sepolia testnet.
 
-  const { data: balance, isLoading: isBalanceLoading } = useWalletBalance({
-    client,
-    chain: chain,
-    address: account?.address,
-  });
-
   const { data: ownerAddress, isPending: isOwnerPending } = useReadContract({
     contract,
     method: "function owner() view returns (address)",
@@ -26,8 +20,8 @@ export default function Home() {
   });
 
   return (
-    <div className="relative min-h-screen  bg-slate-950">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_500px_at_50%_200px,#3e3e3e,transparent)]">
+    <div className="relative min-h-screen h-[100%]  bg-slate-950">
+      <div className=" inset-0  bg-[radial-gradient(circle_500px_at_50%_200px,#3e3e3e,transparent)]">
         <main className="p-4 pb-10  flex items-center justify-center container max-w-screen-lg mx-auto">
           <div className="py-20">
             {account ? (
@@ -54,31 +48,16 @@ export default function Home() {
               </header>
             )}
 
-            <div className="flex justify-center mb-20">
+            <div className="flex justify-center ">
               <ConnectButton client={client} />
             </div>
 
             {account && (
-              <div>
+              <div className="mt-10">
                 <AddMember />
-
-                <div className="grid gap-4 justify-center mt-10">
-                  <p>Wallet Address: {account?.address}</p>
-
-                  {isOwnerPending ? (
-                    <p>Loading owner address...</p>
-                  ) : (
-                    <p>Owner Address: {ownerAddress?.toString()}</p>
-                  )}
-
-                  {isBalanceLoading ? (
-                    <p>Loading wallet balance...</p>
-                  ) : (
-                    <p>
-                      Wallet Balance: {balance?.displayValue} {balance?.symbol}
-                    </p>
-                  )}
-                </div>
+                <p className="mt-2 text-blue-400 ">
+                  please add your wallet address and name to be a member
+                </p>
               </div>
             )}
           </div>
