@@ -2,11 +2,17 @@
 import React, { useEffect, useState } from "react";
 import {
   useActiveAccount,
+  useContractEvents,
   useReadContract,
   useSendTransaction,
 } from "thirdweb/react";
 import { contract } from "../client";
-import { bytesToString, hexToBytes, stringToBytes } from "thirdweb";
+import {
+  bytesToString,
+  hexToBytes,
+  prepareEvent,
+  stringToBytes,
+} from "thirdweb";
 import { prepareContractCall, sendTransaction } from "thirdweb";
 
 const Proposals = () => {
@@ -21,6 +27,16 @@ const Proposals = () => {
     params: [],
   });
   console.log("data", data);
+  const preparedEvent = prepareEvent({
+    contract,
+    signature: "event VoteCast(uint256 proID, address voter)",
+  });
+  const { data: event } = useContractEvents({
+    contract,
+    events: [preparedEvent],
+  });
+  console.log("event", event);
+
   useEffect(() => {
     if (data) {
       const decodedProposals = data.map((proposal: any) => {
@@ -103,8 +119,8 @@ const Proposals = () => {
   };
   return (
     // <div className="absolute inset-0 -z-10 h-full w-full items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]">
-    <div className="relative min-h-screen h-[100vh] bg-slate-950 h-screen">
-      <div className="absolute h-[100vh] inset-0 bg-[radial-gradient(circle_500px_at_50%_200px,#3e3e3e,transparent)]">
+    <div className="relative h-[100%] bg-slate-950">
+      <div className="  inset-0   bg-[radial-gradient(circle_500px_at_50%_200px,#3e3e3e,transparent)]">
         <div className="flex justify-center items-center py-4">
           <input
             value={newProposal}
@@ -125,51 +141,57 @@ const Proposals = () => {
         {isPending ? (
           <p>Loading proposals...</p>
         ) : (
-          proposals
-            .filter((proposal) => !proposal.executed)
-            .map((proposal, index) => (
-              <div
-                key={index}
-                className="flex justify-between items-center w-[80%] mx-auto border border-zinc-800 p-8 mt-4 rounded-lg hover:bg-zinc-900 transition-colors hover:border-zinc-700"
-              >
-                <article>
-                  <h2 className="text-lg font-semibold mb-2">
-                    {proposal.decodedData}
-                  </h2>
-                  <p className="text-sm text-zinc-400">
-                    Yes counts: {proposal.yesCount.toString()}
-                  </p>
-                  <p className="text-sm text-zinc-400">
-                    No counts: {proposal.noCount.toString()}
-                  </p>
-                  <p className="text-sm text-zinc-400">
-                    Executed: {proposal.executed.toString()}
-                  </p>
-                </article>
-                <div className="flex flex-col gap-2">
+          proposals.map((proposal, index) => (
+            <div
+              key={index}
+              className="flex justify-between items-center w-[80%] mx-auto border bg-zinc-800 border-zinc-700 p-8 mt-4 rounded-lg hover:bg-zinc-900 transition-colors hover:border-zinc-700"
+            >
+              <div>
+                <h2 className="text-lg font-semibold mb-2">
+                  <span className="text-gray-400">Proposal: </span>
+                  {proposal.decodedData}
+                </h2>
+                <p className="text-sm text-zinc-400 w-1/2">
+                  <span>Yes voters:</span> {proposal.yesCount.toString()}
+                </p>
+                <p className="text-sm text-zinc-400">
+                  No voters: {proposal.noCount.toString()}
+                </p>
+                {/* <p className="text-sm text-zinc-400">
+                  Executed: {proposal.executed.toString()}
+                </p> */}
+              </div>
+              <div className="flex flex-col gap-2 ">
+                {!proposal.executed ? (
+                  <>
+                    {" "}
+                    <button
+                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                      onClick={() => castVote(index, true)}
+                    >
+                      Vote Yes
+                    </button>
+                    <button
+                      className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                      onClick={() => castVote(index, false)}
+                    >
+                      Vote No
+                    </button>
+                  </>
+                ) : (
+                  <p>Proposal already executed</p>
+                )}
+                {account?.address === proposal.target && !proposal.executed && (
                   <button
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                    onClick={() => castVote(index, true)}
-                  >
-                    Yes Vote
-                  </button>
-                  <button
-                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                    onClick={() => castVote(index, false)}
-                  >
-                    No Vote
-                  </button>
-                </div>
-                {account?.address === proposal.target && (
-                  <button
-                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                    className="text-blue-300 hover:text-blue-200"
                     onClick={() => excute(index)}
                   >
-                    Execute Proposal
+                    <span>excute proposal</span>
                   </button>
                 )}
               </div>
-            ))
+            </div>
+          ))
         )}
       </div>
     </div>

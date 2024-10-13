@@ -27,7 +27,7 @@ const Members = () => {
 
     return (
       <div className="relative min-h-screen w-full bg-slate-950">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_500px_at_50%_200px,#3e3e3e,transparent)]">
+        <div className=" inset-0 h-screen  bg-[radial-gradient(circle_500px_at_50%_200px,#3e3e3e,transparent)]">
           <h2>Members List</h2>
           {uniqueMembers.map(
             (
