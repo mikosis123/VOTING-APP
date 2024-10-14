@@ -75,7 +75,6 @@ const Proposals = () => {
       console.error("No account connected");
       return;
     }
-
     try {
       const transaction = await prepareContractCall({
         contract,

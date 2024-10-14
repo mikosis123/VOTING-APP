@@ -9,7 +9,7 @@ import { contract } from "../client";
 import { bytesToString, hexToBytes, stringToBytes } from "thirdweb";
 import { prepareContractCall } from "thirdweb";
 
-const ExecutedProposals = () => {
+const ProposalsExcute = () => {
   const account = useActiveAccount();
   const [proposals, setProposals] = useState<any[]>([]);
   const [newProposal, setNewProposal] = useState("");
@@ -120,4 +120,4 @@ const ExecutedProposals = () => {
   );
 };
 
-export default ExecutedProposals;
+export default ProposalsExcute;

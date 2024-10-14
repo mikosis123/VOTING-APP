@@ -28,8 +28,8 @@ export default function Home() {
   console.log("members", members);
 
   return (
-    <div className="  h-[100%]  bg-slate-950">
-      <div className=" inset-0 h-[100%]  bg-[radial-gradient(circle_500px_at_50%_200px,#3e3e3e,transparent)]">
+    <div className=" min-h-screen  h-[100%]  bg-slate-950">
+      <div className=" inset-0 min-h-screen bg-[radial-gradient(circle_400px_at_50%_200px,#3e3e3e,transparent)]">
         <main className="p-4 pb-10  flex items-center justify-center container max-w-screen-lg mx-auto">
           <div className="py-20">
             {account ? (
