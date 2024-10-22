@@ -14,12 +14,23 @@ import {
   stringToBytes,
 } from "thirdweb";
 import { prepareContractCall, sendTransaction } from "thirdweb";
+import { add } from "thirdweb/extensions/thirdweb";
+import Modal from "../components/Modal";
 
+const preparedEvent = prepareEvent({
+  contract,
+  signature: "event VoteCast(uint256 proID, address voter)",
+});
 const Proposals = () => {
   const account = useActiveAccount();
   const [proposals, setProposals] = useState<any[]>([]);
   const [newProposal, setNewProposal] = useState("");
+  const [voterAddresses, setVoterAddresses] = useState<string[]>([]);
+  const [VoterproID, setVoterproID] = useState<bigint[]>([]);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
   const { mutate: sendTransactionon } = useSendTransaction();
+  const [popupMessage, setPopupMessage] = useState("");
+
   const { data, isPending } = useReadContract({
     contract,
     method:
@@ -27,6 +38,26 @@ const Proposals = () => {
     params: [],
   });
   console.log("data", data);
+  const { data: event } = useContractEvents({
+    contract,
+    events: [preparedEvent],
+  });
+
+  console.log("event", event?.[0].args.proID);
+  const addresses = event?.map((event) => event?.args?.voter);
+  console.log("addresses", addresses);
+  useEffect(() => {
+    if (event) {
+      const addresses = event.map((e) => e.args.voter);
+      setVoterAddresses(addresses);
+    }
+  }, [event]);
+  useEffect(() => {
+    if (event) {
+      const proID = event.map((e) => BigInt(e.args.proID));
+      setVoterproID(proID);
+    }
+  }, [event]);
 
   useEffect(() => {
     if (data) {
@@ -42,10 +73,46 @@ const Proposals = () => {
     }
   }, [data]);
 
+  // const castVote = async (proposalId: number, vote: boolean) => {
+  //   if (!account) {
+  //     console.error("No active account found");
+  //     return;
+  //   }
+
+  //   try {
+  //     const transaction = prepareContractCall({
+  //       contract,
+  //       method: "function castVote(uint256 proID, bool vote)",
+  //       params: [BigInt(proposalId), vote],
+  //     });
+  //     const { transactionHash } = await sendTransaction({
+  //       transaction,
+  //       account,
+  //     });
+
+  //     console.log("Transaction successful!", transactionHash);
+  //   } catch (error) {
+  //     console.error("Error casting vote:", error);
+  //   }
+  // };
   const castVote = async (proposalId: number, vote: boolean) => {
     if (!account) {
       console.error("No active account found");
       return;
+    }
+
+    // Check if the user has already voted for this proposal
+    const hasAlreadyVoted = voterAddresses.some(
+      (voterAddress, index) =>
+        voterAddress === account.address &&
+        VoterproID[index] === BigInt(proposalId)
+    );
+
+    if (hasAlreadyVoted) {
+      console.log("You have already voted on this proposal.");
+      setPopupMessage("You have already voted on this proposal.");
+      setIsPopupOpen(true);
+      return; // Prevent voting again
     }
 
     try {
@@ -64,6 +131,7 @@ const Proposals = () => {
       console.error("Error casting vote:", error);
     }
   };
+
   const encodedData = stringToBytes(newProposal);
   const hexEncodedData = `0x${Buffer.from(encodedData).toString(
     "hex"
@@ -111,6 +179,10 @@ const Proposals = () => {
       account,
     });
   };
+  const closePopup = () => {
+    setIsPopupOpen(false);
+    setPopupMessage("");
+  };
   return (
     // <div className="absolute inset-0 -z-10 h-full w-full items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]">
     <div className=" h-[100%] min-h-screen bg-slate-950 pb-10">
@@ -151,9 +223,6 @@ const Proposals = () => {
                 <p className="text-sm text-zinc-400">
                   No voters: {proposal.noCount.toString()}
                 </p>
-                {/* <p className="text-sm text-zinc-400">
-                  Executed: {proposal.executed.toString()}
-                </p> */}
               </div>
               <div className="flex flex-col gap-2 ">
                 {!proposal.executed ? (
@@ -188,6 +257,7 @@ const Proposals = () => {
           ))
         )}
       </div>
+      {isPopupOpen && <Modal message={popupMessage} onClose={closePopup} />}
     </div>
   );
 };
