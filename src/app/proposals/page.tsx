@@ -43,7 +43,7 @@ const Proposals = () => {
     events: [preparedEvent],
   });
 
-  console.log("event", event?.[0].args.proID);
+  // console.log("event", event?.[0].args.proID);
   const addresses = event?.map((event) => event?.args?.voter);
   console.log("addresses", addresses);
   useEffect(() => {
