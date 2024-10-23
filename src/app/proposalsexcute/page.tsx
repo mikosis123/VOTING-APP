@@ -69,8 +69,8 @@ const ProposalsExcute = () => {
   }, [data]);
 
   return (
-    <div className="relative min-h-screen w-full bg-slate-950 pb-10">
-      <div className=" inset-0 h-screen py-8 bg-[radial-gradient(circle_500px_at_50%_200px,#3e3e3e,transparent)]">
+    <div className=" h-[100%] min-h-screen bg-slate-950 pb-10">
+      <div className="  inset-0  pt-8 bg-[radial-gradient(circle_500px_at_50%_200px,#3e3e3e,transparent)]">
         {isPending ? (
           <p>Loading proposals...</p>
         ) : (
@@ -79,7 +79,7 @@ const ProposalsExcute = () => {
             .map((proposal, index) => (
               <div
                 key={index}
-                className="flex justify-between items-center w-[80%] mx-auto border border-zinc-800 p-8  rounded-lg hover:bg-zinc-900 transition-colors hover:border-zinc-700"
+                className="flex mb-4 justify-between items-center w-[80%] mx-auto border border-zinc-800 p-8  rounded-lg hover:bg-zinc-900 transition-colors hover:border-zinc-700"
               >
                 <article>
                   <h2 className="text-lg font-semibold mb-2">

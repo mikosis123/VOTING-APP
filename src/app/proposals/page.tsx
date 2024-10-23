@@ -210,7 +210,9 @@ const Proposals = () => {
           proposals.map((proposal, index) => (
             <div
               key={index}
-              className="flex justify-between items-center w-[80%] mx-auto border bg-zinc-800 border-zinc-700 p-8 mt-4 rounded-lg hover:bg-zinc-900 transition-colors hover:border-zinc-700"
+              className={`flex ${
+                proposal.isDeleted ? "hidden" : ""
+              } justify-between items-center w-[80%] mx-auto border bg-zinc-800 border-zinc-700 p-8 mt-4 rounded-lg hover:bg-zinc-900 transition-colors hover:border-zinc-700`}
             >
               <div>
                 <h2 className="text-lg font-semibold mb-2">
