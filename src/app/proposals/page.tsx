@@ -18,7 +18,7 @@ import { add } from "thirdweb/extensions/thirdweb";
 import Modal from "../components/Modal";
 
 const preparedEvent = prepareEvent({
-  contract,
+  // contract,
   signature: "event VoteCast(uint256 proID, address voter)",
 });
 const Proposals = () => {
