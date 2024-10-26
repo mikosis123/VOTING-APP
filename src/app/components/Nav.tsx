@@ -22,8 +22,8 @@ const Nav = () => {
   });
 
   return (
-    <nav className="bg-gray-700 text-white py-2 px-6 border-gray-500">
-      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+    <nav className="bg-gray-700 text-white py-1 px-6 border-gray-500">
+      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-2">
         <Link
           href="/"
           className="flex items-center space-x-3 rtl:space-x-reverse"
