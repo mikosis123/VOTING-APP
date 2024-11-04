@@ -97,7 +97,8 @@ const Proposals = () => {
   // };
   const castVote = async (proposalId: number, vote: boolean) => {
     if (!account) {
-      console.error("No active account found");
+      setPopupMessage("please connect your wallet.");
+      setIsPopupOpen(true);
       return;
     }
 
@@ -214,7 +215,7 @@ const Proposals = () => {
                 proposal.isDeleted ? "hidden" : ""
               } justify-between items-center w-[80%] mx-auto border bg-zinc-800 border-zinc-700 p-8 mt-4 rounded-lg hover:bg-zinc-900 transition-colors hover:border-zinc-700`}
             >
-              <div>
+              <div className="mr-4 w-3/4">
                 <h2 className="text-lg font-semibold mb-2">
                   <span className="text-gray-400">Proposal: </span>
                   {proposal.decodedData}
@@ -226,10 +227,9 @@ const Proposals = () => {
                   No voters: {proposal.noCount.toString()}
                 </p>
               </div>
-              <div className="flex flex-col gap-2 ">
+              <div className="flex flex-col gap-2 w-1/4 p-2">
                 {!proposal.executed ? (
                   <>
-                    {" "}
                     <button
                       className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                       onClick={() => castVote(index, true)}
