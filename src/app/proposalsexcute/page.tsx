@@ -91,12 +91,12 @@ const ProposalsExcute = () => {
                   <p className="text-sm text-zinc-400">
                     No counts: {proposal.noCount.toString()}
                   </p>
-                  <p className="text-sm text-zinc-400">
+                  {/* <p className="text-sm text-zinc-400">
                     Executed: {proposal.executed.toString()}
                   </p>
                   <p className="text-sm text-zinc-400">
                     delated: {proposal.isDeleted.toString()}
-                  </p>
+                  </p> */}
                 </article>
                 <div className="flex flex-col gap-4">
                   <button

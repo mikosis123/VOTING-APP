@@ -142,6 +142,8 @@ const Proposals = () => {
   const onClick = async () => {
     if (!account?.address) {
       console.error("No account connected");
+      setIsPopupOpen(true);
+      setPopupMessage("please connect your wallet");
       return;
     }
     try {
@@ -154,7 +156,8 @@ const Proposals = () => {
       sendTransactionon(transaction, {
         onSuccess: (txResult) => {
           console.log("Transaction successful!", txResult);
-
+          setIsPopupOpen(true);
+          setPopupMessage("successfuly created proposal");
           setNewProposal("");
         },
         onError: (error) => {
@@ -165,6 +168,7 @@ const Proposals = () => {
       console.error("Error preparing transaction:", error);
     }
   };
+
   const excute = async (proID: number) => {
     if (!account) {
       console.error("No active account found");
@@ -188,8 +192,8 @@ const Proposals = () => {
     // <div className="absolute inset-0 -z-10 h-full w-full items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]">
     <div className=" h-[100%] min-h-screen bg-slate-950 pb-10">
       <div className="  inset-0   bg-[radial-gradient(circle_500px_at_50%_200px,#3e3e3e,transparent)]">
-        <div className="flex justify-center items-center py-4">
-          <input
+        <div className=" py-4 w-[50%] mx-auto ">
+          {/* <input
             value={newProposal}
             onChange={(e) => setNewProposal(e.target.value)}
             type="text"
@@ -197,13 +201,71 @@ const Proposals = () => {
             id="proposal"
             name="proposal"
             placeholder="Enter proposal data"
-          />
-          <button
+          /> */}
+
+          <div className="pl-10">
+            <div className="relative">
+              <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="1535"
+                  height="2500"
+                  preserveAspectRatio="xMidYMid"
+                  viewBox="0 0 256 417"
+                  id="ethereum"
+                  className="w-4 h-4 text-gray-500 dark:text-gray-400"
+                >
+                  <path
+                    fill="#343434"
+                    d="M127.961 0l-2.795 9.5v275.668l2.795 2.79 127.962-75.638z"
+                  ></path>
+                  <path
+                    fill="#8C8C8C"
+                    d="M127.962 0L0 212.32l127.962 75.639V154.158z"
+                  ></path>
+                  <path
+                    fill="#3C3C3B"
+                    d="M127.961 312.187l-1.575 1.92v98.199l1.575 4.6L256 236.587z"
+                  ></path>
+                  <path
+                    fill="#8C8C8C"
+                    d="M127.962 416.905v-104.72L0 236.585z"
+                  ></path>
+                  <path
+                    fill="#141414"
+                    d="M127.961 287.958l127.96-75.637-127.96-58.162z"
+                  ></path>
+                  <path
+                    fill="#393939"
+                    d="M0 212.32l127.96 75.638v-133.8z"
+                  ></path>
+                </svg>
+              </div>
+              <input
+                value={newProposal}
+                onChange={(e) => setNewProposal(e.target.value)}
+                type="text"
+                id="proposal"
+                name="proposal"
+                placeholder="Enter proposal data"
+                className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              />
+              <button
+                type="submit"
+                onClick={onClick}
+                className="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              >
+                Creating Proposal
+              </button>
+            </div>
+          </div>
+
+          {/* <button
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             onClick={onClick}
           >
             Creating Proposal
-          </button>
+          </button> */}
         </div>
         {isPending ? (
           <p>Loading proposals...</p>
