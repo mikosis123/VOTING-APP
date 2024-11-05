@@ -51,9 +51,16 @@ const ProposalsExcute = () => {
   const { data, isPending } = useReadContract({
     contract,
     method:
-      "function getProposals() view returns ((address target, bytes data, uint256 yesCount, uint256 noCount, bool executed, bool isDeleted)[])",
+      "function getProposals() view returns ((address target, bytes data, uint256 yesCount, uint256 noCount, bool executed, bool isDeleted, uint256 timestamp)[])",
     params: [],
   });
+  const proposalsWithReadableDate = data?.map((proposal) => ({
+    ...proposal,
+    readableDate: new Date(Number(proposal.timestamp) * 1000).toLocaleString(),
+    decodedData: proposal.data
+      ? bytesToString(hexToBytes(proposal.data))
+      : "No Data",
+  }));
 
   // Decode proposal data when it's fetched
   useEffect(() => {
@@ -74,8 +81,8 @@ const ProposalsExcute = () => {
         {isPending ? (
           <p>Loading proposals...</p>
         ) : (
-          proposals
-            .filter((proposal) => proposal.executed && !proposal.isDeleted) // Only show executed proposals
+          proposalsWithReadableDate
+            ?.filter((proposal) => proposal.executed && !proposal.isDeleted) // Only show executed proposals
             .map((proposal, index) => (
               <div
                 key={index}
@@ -91,12 +98,9 @@ const ProposalsExcute = () => {
                   <p className="text-sm text-zinc-400">
                     No counts: {proposal.noCount.toString()}
                   </p>
-                  {/* <p className="text-sm text-zinc-400">
-                    Executed: {proposal.executed.toString()}
-                  </p>
                   <p className="text-sm text-zinc-400">
-                    delated: {proposal.isDeleted.toString()}
-                  </p> */}
+                    created time: {proposal.readableDate}
+                  </p>
                 </article>
                 <div className="flex flex-col gap-4">
                   <button

@@ -34,9 +34,18 @@ const Proposals = () => {
   const { data, isPending } = useReadContract({
     contract,
     method:
-      "function getProposals() view returns ((address target, bytes data, uint256 yesCount, uint256 noCount, bool executed, bool isDeleted)[])",
+      "function getProposals() view returns ((address target, bytes data, uint256 yesCount, uint256 noCount, bool executed, bool isDeleted, uint256 timestamp)[])",
     params: [],
   });
+
+  const proposalsWithReadableDate = data?.map((proposal) => ({
+    ...proposal,
+    readableDate: new Date(Number(proposal.timestamp) * 1000).toLocaleString(),
+    decodedData: proposal.data
+      ? bytesToString(hexToBytes(proposal.data))
+      : "No Data",
+  }));
+
   console.log("data", data);
   const { data: event } = useContractEvents({
     contract,
@@ -58,7 +67,6 @@ const Proposals = () => {
       setVoterproID(proID);
     }
   }, [event]);
-
   useEffect(() => {
     if (data) {
       const decodedProposals = data.map((proposal: any) => {
@@ -132,13 +140,11 @@ const Proposals = () => {
       console.error("Error casting vote:", error);
     }
   };
-
   const encodedData = stringToBytes(newProposal);
   const hexEncodedData = `0x${Buffer.from(encodedData).toString(
     "hex"
   )}` as `0x${string}`;
   console.log(proposals); // Already returns `bytes`
-
   const onClick = async () => {
     if (!account?.address) {
       console.error("No account connected");
@@ -192,17 +198,7 @@ const Proposals = () => {
     // <div className="absolute inset-0 -z-10 h-full w-full items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]">
     <div className=" h-[100%] min-h-screen bg-slate-950 pb-10">
       <div className="  inset-0   bg-[radial-gradient(circle_500px_at_50%_200px,#3e3e3e,transparent)]">
-        <div className=" py-4 w-[50%] mx-auto ">
-          {/* <input
-            value={newProposal}
-            onChange={(e) => setNewProposal(e.target.value)}
-            type="text"
-            className="border text-gray-900 border-gray-300 rounded-md p-2 m-2"
-            id="proposal"
-            name="proposal"
-            placeholder="Enter proposal data"
-          /> */}
-
+        <div className=" py-6 w-[50%] mx-auto ">
           <div className="pl-10">
             <div className="relative">
               <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -259,18 +255,11 @@ const Proposals = () => {
               </button>
             </div>
           </div>
-
-          {/* <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            onClick={onClick}
-          >
-            Creating Proposal
-          </button> */}
         </div>
         {isPending ? (
           <p>Loading proposals...</p>
         ) : (
-          proposals.map((proposal, index) => (
+          proposalsWithReadableDate?.map((proposal, index) => (
             <div
               key={index}
               className={`flex ${
@@ -287,6 +276,9 @@ const Proposals = () => {
                 </p>
                 <p className="text-sm text-zinc-400">
                   No voters: {proposal.noCount.toString()}
+                </p>
+                <p className="text-sm text-zinc-400">
+                  created on : {proposal.readableDate}
                 </p>
               </div>
               <div className="flex flex-col gap-2 w-1/4 p-2">
