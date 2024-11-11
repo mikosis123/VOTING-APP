@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { prepareContractCall } from "thirdweb";
-import { useSendTransaction } from "thirdweb/react";
+import { useActiveAccount, useSendTransaction } from "thirdweb/react";
 import { contract } from "../client";
 
 const AddMember = () => {
+  const account = useActiveAccount();
   const { mutate: sendTransaction } = useSendTransaction();
   const [_newMember, setNewMember] = React.useState("");
   const [_name, setName] = React.useState("");
@@ -15,19 +16,23 @@ const AddMember = () => {
       params: [_newMember, _name],
     });
     sendTransaction(transaction);
-    setNewMember("");
+
     setName("");
   };
+  useEffect(() => {
+    setNewMember(account?.address || ""); // set empty string if account.address is undefined
+  }, [account]);
+
   return (
-    <div>
-      <input
+    <div className="flex items-center justify-center">
+      {/* <input
         onChange={(e) => setNewMember(e.target.value)}
         type="text"
         className="border text-black border-gray-300 rounded-md p-2 m-2"
         placeholder="address"
         id="newMember"
         name="newMember"
-      />
+      /> */}
       <input
         onChange={(e) => setName(e.target.value)}
         type="text"
@@ -40,7 +45,7 @@ const AddMember = () => {
         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         onClick={onClick}
       >
-        Add Member
+        register
       </button>
     </div>
   );

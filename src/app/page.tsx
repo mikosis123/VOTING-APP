@@ -69,8 +69,8 @@ export default function Home() {
                 ) ? (
                   <div>
                     <AddMember />
-                    <p className="mt-2 text-blue-400">
-                      Please add your wallet address and name to be a member
+                    <p className="mt-2 text-blue-400 text-center">
+                      Please register your name to be a member
                     </p>
                   </div>
                 ) : (
